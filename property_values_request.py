@@ -1,17 +1,17 @@
-from matplotlib.colors import Normalize
+#from matplotlib.colors import Normalize
 import pandas as pd
 import streamlit as st
-import pyarrow as pa
+#import pyarrow as pa
 import numpy as np
 import matplotlib.pyplot as plt
-import datetime as dt 
-from streamlit.elements.color_picker import ColorPickerMixin
+#import datetime as dt 
+#from streamlit.elements.color_picker import ColorPickerMixin
 import plotly_express as px
 import seaborn as sns
-import time 
-import os
-import streamlit.components.v1 as components
-from bokeh.plotting import figure
+#import time 
+#import os
+#import streamlit.components.v1 as components
+#from bokeh.plotting import figure
 
 @st.cache(allow_output_mutation=True)
 def load_metadata(url):
