@@ -35,7 +35,7 @@ def load_metadata(url):
     return df
 
 def csv(app_mode):
-    return "full_"+str(app_mode)+'.csv'
+    return str(app_mode)+ '_sample.csv'
 
 def map(app_mode):
     st.header("Localisation of mutations in "+app_mode)
