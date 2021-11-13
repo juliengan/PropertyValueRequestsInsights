@@ -106,7 +106,7 @@ def type_local_repart(df):
     sizes = df['type_local'].value_counts(normalize=True) * 100
     explode = (0.1,0,0,0)  
     fig1, ax1 = plt.subplots()
-    ax1.pie(sizes, shadow=True, startangle=100,normalize=True,autopct=lambda x: str(round(x, 2)) + '%',labels=labels,explode=explode)
+    ax1.pie(sizes, shadow=True, startangle=100,autopct=lambda x: str(round(x, 2)) + '%',labels=labels,explode=explode)
     ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
     st.pyplot(fig1)
     st.write("Selling is the most common way of mutation")
