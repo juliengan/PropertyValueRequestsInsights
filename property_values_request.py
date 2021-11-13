@@ -93,26 +93,20 @@ def pie_chart(df):
     st.header("Repartition of mutation type (sales, exchanges, expropriation, adjudication) "+app_mode)
     labels = 'Vente', 'Vente en l\'état futur d\'achèvement', 'Echange', 'Vente terrain à bâtir', 'Adjudication','Expropriation'
     sizes = df['nature_mutation'].value_counts(normalize=True) * 100
-    explode = (0, 0, 0, 0,0,0)  
     fig1, ax1 = plt.subplots()
-    ax1.pie(sizes, shadow=True, startangle=90,normalize=True,
-    labeldistance = 1.3,autopct = lambda x: str(round(x, 2)) + '%',pctdistance = 0.7)
-    #'''autopct='%1.1f%%',''',
+    ax1.pie(sizes, shadow=True, startangle= 100, autopct=lambda x: str(round(x, 2)),pctdistance = 0.7)
     ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
     plt.legend(bbox_to_anchor=(1,0), loc="lower right", labels=labels,bbox_transform=plt.gcf().transFigure)
     st.pyplot(fig1)
 
 def type_local_repart(df):
-    st.header("Repartition of local types "+app_mode)
-    labels = "Appartement", "Dépendance", "Maison", "Local industriel. commerci"  #df['type_local'].dropna().values
+    st.header("Repartition of local types "+ app_mode)
+    labels = 'Maison','Appartement', 'Dépendance', 'Local industriel. commercial ou assimilé'
     sizes = df['type_local'].value_counts(normalize=True) * 100
-    explode = (0, 0, 0, 0,0,0)  
+    explode = (0.1,0,0,0)  
     fig1, ax1 = plt.subplots()
-    ax1.pie(sizes, shadow=True, startangle=90,normalize=True,
-    labeldistance = 1.3,autopct = lambda x: str(round(x, 2)) + '%',pctdistance = 0.7)
-    #'''autopct='%1.1f%%',''',
+    ax1.pie(sizes, shadow=True, startangle=100,normalize=True,autopct=lambda x: str(round(x, 2)) + '%',labels=labels,explode=explode)
     ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-    plt.legend(bbox_to_anchor=(1,0), loc="lower right", labels=labels,bbox_transform=plt.gcf().transFigure)
     st.pyplot(fig1)
 
 
@@ -154,7 +148,7 @@ app_mode = st.sidebar.selectbox("",
 #Data visualization : visual representation and analysis through different axes and aggregations
 df = load_metadata(csv(app_mode))
 st.write("Year "+app_mode)
-st.write(df)
+#st.write(df)
 map(app_mode)
 pie_chart(df)
 type_local_repart(df)
