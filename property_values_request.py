@@ -36,15 +36,11 @@ def log(func):
 
 @st.cache(suppress_st_warning=True,allow_output_mutation=True)
 def load_metadata(url):
-    n = 100
-    #, skiprows=lambda i: i % n != 0
-    df = pd.read_csv(url, header=0, parse_dates=['date_mutation'],
-    skipinitialspace = True,
+    df = pd.read_csv(url, header=0, parse_dates=['date_mutation'],skipinitialspace = True,
     dtype={("nature_mutation ","nom_commune","nature_culture"):"category",("valeur_fonciere","code_postal","surface_relle_bati","nombre_pieces_principales","surface_terrain","longitude","latitude") : "float32"})
     df['date_mutation'] = pd.to_datetime(df['date_mutation'])
-    #df['date_mutation'] = df['date_mutation'].astype(str)
     df['id_mutation'] = df['id_mutation'].astype(str)
-    df = df.drop(columns= ['adresse_suffixe','adresse_numero','ancien_code_commune', 'ancien_nom_commune',
+    df = df.drop(columns= ['Unnamed: 0','adresse_suffixe','adresse_numero','ancien_code_commune', 'ancien_nom_commune',
                            'ancien_id_parcelle', 
         'numero_volume', 'lot1_numero', 'lot1_surface_carrez', 'lot2_numero', 
                            'lot2_surface_carrez', 'lot3_numero', 'lot3_surface_carrez', 
@@ -67,10 +63,14 @@ def load_metadata(url):
     df['nature_mutation'] = df['nature_mutation'].dropna()
 
 
+    #Set sorted date as index 
+    df = df.set_index(['date_mutation'])
+    df = df.sort_index()
+    df.index = pd.to_datetime(df.index)
 
-    df['dom'] = df['date_mutation'].map(get_dom)
-    df['weekday'] = df['date_mutation'].map(get_weekday)
-    df.drop_duplicates(subset = "date_mutation")
+    df['dom'] = df.index.map(get_dom)
+    df['weekday'] = df.index.map(get_weekday)
+    #df.drop_duplicates(subset = date)
     df.drop_duplicates(subset = "id_mutation")
     df.drop_duplicates(subset = "numero_disposition")
     df.drop_duplicates(subset = "valeur_fonciere")
@@ -98,6 +98,7 @@ def pie_chart(df):
     ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
     plt.legend(bbox_to_anchor=(1,0), loc="lower right", labels=labels,bbox_transform=plt.gcf().transFigure)
     st.pyplot(fig1)
+    st.write("Selling is the most common way of mutation")
 
 def type_local_repart(df):
     st.header("Repartition of local types "+ app_mode)
@@ -108,6 +109,8 @@ def type_local_repart(df):
     ax1.pie(sizes, shadow=True, startangle=100,normalize=True,autopct=lambda x: str(round(x, 2)) + '%',labels=labels,explode=explode)
     ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
     st.pyplot(fig1)
+    st.write("Selling is the most common way of mutation")
+
 
 
 def histogram(rows):
@@ -122,8 +125,9 @@ def histogram(rows):
 
 def valeur_fonciere_vs_date():
     st.header("Land value fluctuation through time")
-    df['date_mutation'] = pd.to_datetime(df['date_mutation'])
-    fig3 = px.bar(df, x='date_mutation', y='valeur_fonciere')
+    df.index = pd.to_datetime(df.index)
+    date = df.index
+    fig3 = px.bar(df, x=date, y='valeur_fonciere')
     ts_chart = st.plotly_chart(fig3)
 
 
@@ -154,7 +158,8 @@ pie_chart(df)
 type_local_repart(df)
 
 st.line_chart(df['valeur_fonciere'])
-st.line_chart(df[['surface_reelle_bati','surface_terrain']])
+st.line_chart(df['surface_reelle_bati'])
+st.line_chart(df['surface_terrain'])
 
 
 valeur_fonciere_vs_date()
@@ -162,7 +167,7 @@ valeur_fonciere_vs_department()
 surface_terrain_vs_department()
 
 st.header("Histogram")
-hist_values = np.histogram(df['date_mutation'].dt.hour, bins=24, range=(0,24))[0]
+hist_values = np.histogram(df.index.dt.hour, bins=24, range=(0,24))[0]
 
 histogram(df['weekday'])
 histogram(df['dom'])
