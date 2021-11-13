@@ -167,7 +167,7 @@ valeur_fonciere_vs_department()
 surface_terrain_vs_department()
 
 st.header("Histogram")
-hist_values = np.histogram(df.index.dt.hour, bins=24, range=(0,24))[0]
+hist_values = np.histogram(df.index.hour, bins=24, range=(0,24))[0]
 
 histogram(df['weekday'])
 histogram(df['dom'])
