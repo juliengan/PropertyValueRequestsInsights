@@ -17,12 +17,14 @@ Another solution would be to use bucket S3 provided by Amazon.
 
 ## 2. Explore and Process : Data cleaning, pre-processing, transformation and enrichment
 
+I load the csv files in dataframes
+
 I had first to preprocess the dataframes by dropping all empty columns as welle as drop missing information in some rows.
 
 Thanks to pandas_profilling, I was able to see the high correlations variables have between each other and extract that visually with plots using streamlit 
 in python.
 
-
+I sort the date_mutation after converting it into datetime type and I set it a the index of the dataframe, especially useful to interpret the line charts (evolution of valeur fonciere, surface réelle bâtie and surface terrain) 
 
 ## 3. Data visualization : visual representation and analysis through different axes and aggregations
 ## 4. Insights extraction to support analytical findings and decision making
