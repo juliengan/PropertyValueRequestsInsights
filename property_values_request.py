@@ -34,7 +34,7 @@ def log(func):
     return wrapper
 
 
-@st.cache(suppress_st_warning=True,allow_output_mutation=True)
+@st.cache(suppress_st_warning=True,allow_output_mutation=True) 
 def load_metadata(url):
     df = pd.read_csv(url, header=0, parse_dates=['date_mutation'],skipinitialspace = True,
     dtype={("nature_mutation ","nom_commune","nature_culture"):"category",("valeur_fonciere","code_postal","surface_relle_bati","nombre_pieces_principales","surface_terrain","longitude","latitude") : "float32"})
@@ -89,7 +89,7 @@ def map(app_mode):
     cleaned = data.dropna()
     st.map(cleaned)
 
-def pie_chart(df):
+def nature_mutation_repart(df):
     st.header("Repartition of mutation type (sales, exchanges, expropriation, adjudication) "+app_mode)
     labels = 'Vente', 'Vente en l\'état futur d\'achèvement', 'Echange', 'Vente terrain à bâtir', 'Adjudication','Expropriation'
     sizes = df['nature_mutation'].value_counts(normalize=True) * 100
@@ -109,7 +109,7 @@ def type_local_repart(df):
     ax1.pie(sizes, shadow=True, startangle=100,autopct=lambda x: str(round(x, 2)) + '%',labels=labels,explode=explode)
     ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
     st.pyplot(fig1)
-    st.write("Selling is the most common way of mutation")
+    st.write("Houses and apartments are the most common transactions")
 
 
 
@@ -146,18 +146,18 @@ def surface_terrain_vs_department():
 st.title("Project - Julie NGAN")
 st.write("Data Visualization - Return of transfers against payment ")
 
-st.sidebar.title("Year")
-app_mode = st.sidebar.selectbox("",
+st.sidebar.title("Search")
+app_mode = st.sidebar.selectbox("Year",
         ["2016", "2017", "2018", "2019", "2020"])
-focus = st.sidebar.selectbox("",
-        ["Whole France", "By departments"])
+focus = st.sidebar.selectbox("Scale",
+        ["National", "Departmental"])
 #Data visualization : visual representation and analysis through different axes and aggregations
 df = load_metadata(csv(app_mode))
 st.write("Year "+app_mode)
 #st.write(df)
-if (focus == "Whole France"):
+if (focus == "National"):
     map(app_mode)
-    pie_chart(df)
+    nature_mutation_repart(df)
     type_local_repart(df)
 
     st.line_chart(df['valeur_fonciere'])
@@ -212,25 +212,84 @@ if (focus == "Whole France"):
             """,
             height=600
         )
-if (focus == "By departments"):
-    st.write("Chose a department : ")
-    department = st.selectbox("",
+if (focus == "Departmental"):
+    department = st.selectbox("Department",
         ["Gironde (33)", "Nord (59)", "Loire-Atlantique (44)", "Seine-Et-Marne (77)", "Ile-Et-Vilaine (35)", "Alpes Maritimes (06)", "Seine (75)", "Yvelines (78)"])
     if (department == "Gironde (33)"):
-        pass
+        df_depart = df[df['code_departement']=="33"]
     if (department == "Nord (59)"):
-        pass
-    if (department == "Loire-Atlantique (44)"):
-        pass
-    if (department == "Seine-Et-Marne (77)"):
-        pass
-    if (department == "Ile-Et-Vilaine (35)"):
-        pass
-    if (department == "Seine (75)"):
-        pass
-    if (department == "Yvelines (78)"):
-        pass
+        df_depart = df[df['code_departement']=="59"]
 
+    if (department == "Loire-Atlantique (44)"):
+        df_depart = df[df['code_departement']=="44"]
+
+    if (department == "Seine-Et-Marne (77)"):
+        df_depart = df[df['code_departement']=="77"]
+
+    if (department == "Ile-Et-Vilaine (35)"):
+        df_depart = df[df['code_departement']=="35"]
+        st.write('There is no adjudication or expropriation in this department.')
+
+    if (department == "Seine (75)"):
+        df_depart = df[df['code_departement']=="75"]
+
+    if (department == "Yvelines (78)"):
+        df_depart = df[df['code_departement']=="78"]
+
+    nature_mutation_repart(df_depart)
+    type_local_repart(df_depart)
+
+    st.line_chart(df_depart['valeur_fonciere'])
+    st.line_chart(df_depart['surface_reelle_bati'])
+    st.line_chart(df_depart['surface_terrain'])
+
+    valeur_fonciere_vs_date()
+    valeur_fonciere_vs_department()
+    surface_terrain_vs_department()
+
+    st.header("Histogram")
+    hist_values = np.histogram(df_depart.index.hour, bins=24, range=(0,24))[0]
+
+    histogram(df_depart['weekday'])
+    histogram(df_depart['dom'])
+    components.html(
+            """
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+            <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+            <div id="accordion">
+                <div class="card">
+                    <div class="card-header" id="headingOne">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        Weekdays available in the dataset 📚
+                        </button>
+                    </h5>
+                    </div>
+                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                    <div class="card-body">
+                        <iframe src="https://informationisbeautiful.net/visualizations/words-shakespeare-invented/" title="Shakespeare's invented words" ,width=1024,height=768)
+                    </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="headingTwo">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        Point Cloud
+                        </button>
+                    </h5>
+                    </div>
+                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                    <div class="card-body">
+                        <iframe src="https://informationisbeautiful.net/visualizations/words-shakespeare-invented/" title="Shakespeare's invented words" ,width=1024,height=768)
+                    </div>
+                    </div>
+                </div>
+            </div>
+            """,
+            height=600
+        )
     """if __name__ == "__main__":
         main()"""
 
