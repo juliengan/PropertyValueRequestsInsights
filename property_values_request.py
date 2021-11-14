@@ -37,7 +37,6 @@ def log(func):
         return val
     return wrapper
 
-
 @st.cache(suppress_st_warning=True,allow_output_mutation=True) 
 def load_metadata(url):
     df = pd.read_csv(url, header=0, parse_dates=['date_mutation'],skipinitialspace = True,
@@ -82,6 +81,7 @@ def load_metadata(url):
 
     return df
 
+@st.cache(suppress_st_warning=True,allow_output_mutation=True) 
 def csv(app_mode):
     return str(app_mode)+ '_sample.csv'
 
@@ -168,6 +168,16 @@ def altair(df):
     #x='code_departement', y='valeur_fonciere', size='nature_mutation', color='c', tooltip=['code_departement', 'valeur_fonciere', 'nature_mutation'])
     st.altair_chart(c, use_container_width=True)
 
+def seaborn(df):
+    fig, ax = plt.subplots()
+    sns.heatmap(df.corr(), ax=ax)
+    st.write(fig)
+
+    """id = dff["id_mutation"]
+    val = dff["valeur_fonciere"]
+    sns.lineplot(x=id, y=val)
+    st.pyplot()"""
+    st.set_option('deprecation.showPyplotGlobalUse', False)
 
 def main():
 
@@ -188,9 +198,10 @@ def main():
         depart = st.sidebar.checkbox("See by department")
         df = load_metadata(csv(app_mode))
         #altair(df)
+        seaborn(df)
         st.write("Year "+app_mode)
         if depart:
-            if app_mode == "2020":
+            if app_mode == "2¡×÷020":
                 department = st.sidebar.selectbox("Department",
                     ["33", "59", "44", "77", "35", "06", "75", "78"])
             if app_mode == "2016":
@@ -205,7 +216,7 @@ def main():
                     ["33", "59", "69", "44", "13"])
             df_depart = df[df['code_departement']==department]
             
-
+            seaborn(df)
             nature_mutation_repart(df_depart)
             type_local_repart(df_depart)
 
@@ -316,7 +327,7 @@ def main():
                     </div>
                     """,
                     height=600
-                )
+                ) 
 
         """if __name__ == "__main__":
             main()"""
@@ -324,6 +335,8 @@ def main():
         frames = [load_metadata(csv(2016)), load_metadata(csv(2017)), load_metadata(csv(2018)),load_metadata(csv(2019)),load_metadata(csv(2020))]
         df = pd.concat(frames)
         map(df)
+        seaborn(df)
+        st.write("The number of main rooms is negatively correlated to the local type code (-0.75,near -1): the more the rooms, the smaller the code. The local type code is also positively correlated to the number of prizes : the higher the code, the higher the number of prizes")
         nature_mutation_repart(df)
         type_local_repart(df)
         depart_repart(df)
