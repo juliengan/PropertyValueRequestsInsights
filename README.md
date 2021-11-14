@@ -32,4 +32,4 @@ I sort the date_mutation after converting it into datetime type and I set it a t
 
 ## How to use my application
 
-WARNING : In the Departemental scale, only Gironde (33) is functional so far FOR ALL YEARS, because the other departments represented aren't common depending the year chosen. In fact, the list of departments chosen are those the most represented in 2020. 
+You'll have to select one of the checkbox to see the data visualisation
