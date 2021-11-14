@@ -33,10 +33,35 @@ def log(func):
             func()
             f.write("Called function with " + str(time.time() - before) + " seconds " + "\n")
             #f.write("Called function with " + " ".join([str(arg) for arg in args]) + " at " + str(datetime.datetime.now()) + "\n")
-        val = func(*args,**kwargs)
-        return val
+        return func(*args,**kwargs)
     return wrapper
 
+def logDF(appmode):
+    def decorator(fun):
+        print(appmode)
+        def wrapper(*args, **kwargs):
+            with open("logs.txt","a") as f:
+                before = time.time()
+                fun()
+            f.write("Called function with " + str(time.time() - before) + " seconds " + "\n")
+            #f.write("Called function with " + " ".join([str(arg) for arg in args]) + " at " + str(datetime.datetime.now()) + "\n")
+            return fun(*args,**kwargs)
+        return wrapper
+    return decorator
+
+def logMAP(df):
+    def decorator(fun):
+        def wrapper(*args, **kwargs):
+            with open("logs.txt","a") as f:
+                before = time.time()
+                fun()
+            f.write("Called function with " + str(time.time() - before) + " seconds " + "\n")
+            #f.write("Called function with " + " ".join([str(arg) for arg in args]) + " at " + str(datetime.datetime.now()) + "\n")
+            return fun(*args,**kwargs)
+        return wrapper
+    return decorator
+ 
+#@logDF
 @st.cache(suppress_st_warning=True,allow_output_mutation=True) 
 def load_metadata(url):
     df = pd.read_csv(url, header=0, parse_dates=['date_mutation'],skipinitialspace = True,
