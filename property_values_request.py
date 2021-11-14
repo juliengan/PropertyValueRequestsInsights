@@ -81,7 +81,7 @@ def csv(app_mode):
     return str(app_mode)+ '_sample.csv'
 
 
-def map():
+def map(df):
     st.header("Localisation of mutations in ")
     data = pd.DataFrame({
     'awesome cities' : df['nom_commune'],
@@ -146,102 +146,164 @@ def surface_terrain_vs_department():
     fig3 = px.bar(df, x='code_departement', y='surface_terrain')
     ts_chart = st.plotly_chart(fig3)
 
+def main():
 
-st.title("Project - Julie NGAN")
-st.write("Data Visualization - Return of transfers against payment ")
+    st.title("Project - Julie NGAN")
+    st.write("Data Visualization - Return of transfers against payment ")
 
-st.sidebar.title("Search")
+    st.sidebar.title("Search 🔎")
 
-overall = st.sidebar.checkbox("Years overall")
-year_selection = st.sidebar.checkbox("Years selection")
-#focus = st.sidebar.selectbox("Scale",
- #       ["National", "Departmental"])
-#Data visualization : visual representation and analysis through different axes and aggregations
-if year_selection:
-    app_mode = st.sidebar.selectbox("Year",
-            ["2016", "2017", "2018", "2019", "2020"])
-    depart = st.sidebar.checkbox("See by department")
-    df = load_metadata(csv(app_mode))
-    st.write("Year "+app_mode)
-    if depart:
-        department = st.selectbox("Department",
-            ["Gironde (33)", "Nord (59)", "Loire-Atlantique (44)", "Seine-Et-Marne (77)", "Ile-Et-Vilaine (35)", "Alpes Maritimes (06)", "Seine (75)", "Yvelines (78)"])
-        if (department == "Gironde (33)"):
-            df_depart = df[df['code_departement']=="33"]
-        if (department == "Nord (59)"):
-            df_depart = df[df['code_departement']=="59"]
+    overall = st.sidebar.checkbox("Years overall")
+    year_selection = st.sidebar.checkbox("Years selection")
 
-        if (department == "Loire-Atlantique (44)"):
-            df_depart = df[df['code_departement']=="44"]
+    #Data visualization : visual representation and analysis through different axes and aggregations
+    if year_selection:
+        app_mode = st.sidebar.selectbox("Year",
+                ["2016", "2017", "2018", "2019", "2020"])
+        depart = st.sidebar.checkbox("See by department")
+        df = load_metadata(csv(app_mode))
+        st.write("Year "+app_mode)
+        if depart:
+            department = st.selectbox("Department",
+                ["Gironde (33)", "Nord (59)", "Loire-Atlantique (44)", "Seine-Et-Marne (77)", "Ile-Et-Vilaine (35)", "Alpes Maritimes (06)", "Seine (75)", "Yvelines (78)"])
+            if (department == "Gironde (33)"):
+                df_depart = df[df['code_departement']=="33"]
+            if (department == "Nord (59)"):
+                df_depart = df[df['code_departement']=="59"]
 
-        if (department == "Seine-Et-Marne (77)"):
-            df_depart = df[df['code_departement']=="77"]
+            if (department == "Loire-Atlantique (44)"):
+                df_depart = df[df['code_departement']=="44"]
 
-        if (department == "Ile-Et-Vilaine (35)"):
-            df_depart = df[df['code_departement']=="35"]
-            st.write('There is no adjudication or expropriation in this department.')
+            if (department == "Seine-Et-Marne (77)"):
+                df_depart = df[df['code_departement']=="77"]
 
-        if (department == "Seine (75)"):
-            df_depart = df[df['code_departement']=="75"]
+            if (department == "Ile-Et-Vilaine (35)"):
+                df_depart = df[df['code_departement']=="35"]
+                st.write('There is no adjudication or expropriation in this department.')
 
-        if (department == "Yvelines (78)"):
-            df_depart = df[df['code_departement']=="78"]
+            if (department == "Seine (75)"):
+                df_depart = df[df['code_departement']=="75"]
 
-        nature_mutation_repart(df_depart)
-        type_local_repart(df_depart)
+            if (department == "Yvelines (78)"):
+                df_depart = df[df['code_departement']=="78"]
 
-        st.line_chart(df_depart['valeur_fonciere'])
-        st.line_chart(df_depart['surface_reelle_bati'])
-        st.line_chart(df_depart['surface_terrain'])
+            nature_mutation_repart(df_depart)
+            type_local_repart(df_depart)
 
-        valeur_fonciere_vs_date()
+            st.line_chart(df_depart['valeur_fonciere'])
+            st.line_chart(df_depart['surface_reelle_bati'])
+            st.line_chart(df_depart['surface_terrain'])
+
+            valeur_fonciere_vs_date()
 
 
-        st.header("Histogram")
-        hist_values = np.histogram(df_depart.index.hour, bins=24, range=(0,24))[0]
+            st.header("Histogram")
+            hist_values = np.histogram(df_depart.index.hour, bins=24, range=(0,24))[0]
 
-        histogram(df_depart['weekday'])
-        histogram(df_depart['dom'])
-        components.html(
-                """
-                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-                <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-                <div id="accordion">
-                    <div class="card">
-                        <div class="card-header" id="headingOne">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            Weekdays available in the dataset 📚
-                            </button>
-                        </h5>
+            histogram(df_depart['weekday'])
+            histogram(df_depart['dom'])
+            components.html(
+                    """
+                    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+                    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+                    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+                    <div id="accordion">
+                        <div class="card">
+                            <div class="card-header" id="headingOne">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Weekdays available in the dataset 📚
+                                </button>
+                            </h5>
+                            </div>
+                            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                            <div class="card-body">
+                                <iframe src="https://informationisbeautiful.net/visualizations/words-shakespeare-invented/" title="Shakespeare's invented words" ,width=1024,height=768)
+                            </div>
+                            </div>
                         </div>
-                        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                        <div class="card-body">
-                            <iframe src="https://informationisbeautiful.net/visualizations/words-shakespeare-invented/" title="Shakespeare's invented words" ,width=1024,height=768)
-                        </div>
+                        <div class="card">
+                            <div class="card-header" id="headingTwo">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Point Cloud
+                                </button>
+                            </h5>
+                            </div>
+                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                            <div class="card-body">
+                                <iframe src="https://informationisbeautiful.net/visualizations/words-shakespeare-invented/" title="Shakespeare's invented words" ,width=1024,height=768)
+                            </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="card">
-                        <div class="card-header" id="headingTwo">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                            Point Cloud
-                            </button>
-                        </h5>
+                    """,
+                    height=600
+                )
+        else:
+            map(df)
+            nature_mutation_repart(df)
+            type_local_repart(df)
+
+            st.line_chart(df['valeur_fonciere'])
+            st.line_chart(df['surface_reelle_bati'])
+            st.line_chart(df['surface_terrain'])
+
+
+            valeur_fonciere_vs_date()
+            valeur_fonciere_vs_department()
+            surface_terrain_vs_department()
+
+            st.header("Histogram")
+            hist_values = np.histogram(df.index.hour, bins=24, range=(0,24))[0]
+
+            histogram(df['weekday'])
+            histogram(df['dom'])
+            components.html(
+                    """
+                    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+                    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+                    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+                    <div id="accordion">
+                        <div class="card">
+                            <div class="card-header" id="headingOne">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Weekdays available in the dataset 📚
+                                </button>
+                            </h5>
+                            </div>
+                            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                            <div class="card-body">
+                                <iframe src="https://informationisbeautiful.net/visualizations/words-shakespeare-invented/" title="Shakespeare's invented words" ,width=1024,height=768)
+                            </div>
+                            </div>
                         </div>
-                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-                        <div class="card-body">
-                            <iframe src="https://informationisbeautiful.net/visualizations/words-shakespeare-invented/" title="Shakespeare's invented words" ,width=1024,height=768)
-                        </div>
+                        <div class="card">
+                            <div class="card-header" id="headingTwo">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Point Cloud
+                                </button>
+                            </h5>
+                            </div>
+                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                            <div class="card-body">
+                                <iframe src="https://informationisbeautiful.net/visualizations/words-shakespeare-invented/" title="Shakespeare's invented words" ,width=1024,height=768)
+                            </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                """,
-                height=600
-            )
-    else:
-        map()
+                    """,
+                    height=600
+                )
+
+        """if __name__ == "__main__":
+            main()"""
+    if overall:
+        frames = [load_metadata(csv(2016)), load_metadata(csv(2017)), load_metadata(csv(2018)),load_metadata(csv(2019)),load_metadata(csv(2020))]
+        df = pd.concat(frames)
+        map(df)
         nature_mutation_repart(df)
         type_local_repart(df)
 
@@ -297,76 +359,11 @@ if year_selection:
                 """,
                 height=600
             )
-#st.write(df)
-
-
-    """if __name__ == "__main__":
-        main()"""
-if overall:
-    frames = [load_metadata(csv(2016)), load_metadata(csv(2017)), load_metadata(csv(2018)),load_metadata(csv(2019)),load_metadata(csv(2020))]
-    df = pd.concat(frames)
-    map()
-    nature_mutation_repart(df)
-    type_local_repart(df)
-
-    st.line_chart(df['valeur_fonciere'])
-    st.line_chart(df['surface_reelle_bati'])
-    st.line_chart(df['surface_terrain'])
-
-
-    valeur_fonciere_vs_date()
-    valeur_fonciere_vs_department()
-    surface_terrain_vs_department()
-
-    st.header("Histogram")
-    hist_values = np.histogram(df.index.hour, bins=24, range=(0,24))[0]
-
-    histogram(df['weekday'])
-    histogram(df['dom'])
-    components.html(
-            """
-            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-            <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-            <div id="accordion">
-                <div class="card">
-                    <div class="card-header" id="headingOne">
-                    <h5 class="mb-0">
-                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                        Weekdays available in the dataset 📚
-                        </button>
-                    </h5>
-                    </div>
-                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-                    <div class="card-body">
-                        <iframe src="https://informationisbeautiful.net/visualizations/words-shakespeare-invented/" title="Shakespeare's invented words" ,width=1024,height=768)
-                    </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header" id="headingTwo">
-                    <h5 class="mb-0">
-                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                        Point Cloud
-                        </button>
-                    </h5>
-                    </div>
-                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
-                    <div class="card-body">
-                        <iframe src="https://informationisbeautiful.net/visualizations/words-shakespeare-invented/" title="Shakespeare's invented words" ,width=1024,height=768)
-                    </div>
-                    </div>
-                </div>
-            </div>
-            """,
-            height=600
-        )
-#if (focus == "National"):
     
 
 
-
-
+if __name__ == "__main__":
+    main()
 
 
 
