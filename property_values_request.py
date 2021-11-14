@@ -12,6 +12,9 @@ import seaborn as sns
 import time 
 #import os
 import streamlit.components.v1 as components
+import altair as alt
+
+
 #from bokeh.plotting import figure
 @st.cache(allow_output_mutation=True)
 def get_dom(dt):
@@ -157,6 +160,15 @@ def surface_terrain_vs_department(df):
     fig3 = px.bar(df, x='code_departement', y='surface_terrain')
     ts_chart = st.plotly_chart(fig3)
 
+def altair(df):
+    temps = df.index
+    temps = temps[temps < '2020-12-15']
+    c = alt.Chart(temps).mark_line().encode(x='date:T',y='temp:Q')
+    #c = alt.Chart(df).mark_circle().encode(
+    #x='code_departement', y='valeur_fonciere', size='nature_mutation', color='c', tooltip=['code_departement', 'valeur_fonciere', 'nature_mutation'])
+    st.altair_chart(c, use_container_width=True)
+
+
 def main():
 
     st.title("Project - Julie NGAN")
@@ -168,12 +180,14 @@ def main():
     overall = st.sidebar.checkbox("Years overall")
     year_selection = st.sidebar.checkbox("Years selection")
 
+
     #Data visualization : visual representation and analysis through different axes and aggregations
     if year_selection:
         app_mode = st.sidebar.selectbox("Year",
                 ["2016", "2017", "2018", "2019", "2020"])
         depart = st.sidebar.checkbox("See by department")
         df = load_metadata(csv(app_mode))
+        #altair(df)
         st.write("Year "+app_mode)
         if depart:
             if app_mode == "2020":
