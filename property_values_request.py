@@ -72,9 +72,11 @@ def load_metadata(url):
     df['dom'] = df.index.map(get_dom)
     df['weekday'] = df.index.map(get_weekday)
     #df.drop_duplicates(subset = date)
-    df.drop_duplicates(subset = "id_mutation")
-    df.drop_duplicates(subset = "numero_disposition")
-    df.drop_duplicates(subset = "valeur_fonciere")
+    #df = df.drop_duplicates(subset = "id_mutation")
+    #df = df.drop_duplicates(subset = "numero_disposition")
+    #df = df.drop_duplicates(subset = "valeur_fonciere")
+    #df = df.drop_duplicates(subset = "code_departement")
+
     return df
 
 def csv(app_mode):
@@ -115,7 +117,16 @@ def type_local_repart(df):
     st.pyplot(fig1)
     st.write("Houses and apartments are the most common transactions")
 
-
+def depart_repart(df):
+    st.header("Repartition of departments / which one have the highest/lowest number of real estate transactions ? ")
+    labels = df["code_departement"].values
+    sizes = df["code_departement"].value_counts(normalize=True)*100
+    explode = (0.1,0,0,0)  
+    fig1, ax1 = plt.subplots()
+    ax1.pie(sizes, shadow=True, startangle=100,autopct=lambda x: str(round(x, 2)) + '%')
+    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+    st.pyplot(fig1)
+    st.write("Houses and apartments are the most common transactions")
 
 def histogram(rows):
     weekdays = st.expander("Weekdays available in our dataset")
@@ -238,6 +249,7 @@ def main():
             map(df)
             nature_mutation_repart(df)
             type_local_repart(df)
+            depart_repart(df)
 
             st.line_chart(df['valeur_fonciere'])
             st.line_chart(df['surface_reelle_bati'])
@@ -300,6 +312,7 @@ def main():
         map(df)
         nature_mutation_repart(df)
         type_local_repart(df)
+        depart_repart(df)
 
         st.line_chart(df['valeur_fonciere'])
         st.line_chart(df['surface_reelle_bati'])
