@@ -28,3 +28,8 @@ I sort the date_mutation after converting it into datetime type and I set it a t
 
 ## 3. Data visualization : visual representation and analysis through different axes and aggregations
 ## 4. Insights extraction to support analytical findings and decision making
+
+
+## How to use my application
+
+WARNING : In the Departemental scale, only Gironde (33) is functional so far, because the other departments represented aren't common depending the year chosen.
