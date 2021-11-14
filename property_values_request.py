@@ -82,7 +82,7 @@ def csv(app_mode):
 
 
 def map(df):
-    st.header("Localisation of mutations in ")
+    st.header("Localisation of mutations")
     data = pd.DataFrame({
     'awesome cities' : df['nom_commune'],
     'lat' : pd.to_numeric(df['latitude']),
@@ -127,7 +127,7 @@ def histogram(rows):
     plt.ylabel("Frequency")
     weekdays.pyplot(fig4)
 
-def valeur_fonciere_vs_date():
+def valeur_fonciere_vs_date(df):
     st.header("Land value fluctuation through time")
     df.index = pd.to_datetime(df.index)
     date = df.index
@@ -135,13 +135,13 @@ def valeur_fonciere_vs_date():
     ts_chart = st.plotly_chart(fig3)
 
 
-def valeur_fonciere_vs_department():
+def valeur_fonciere_vs_department(df):
     st.header("Land value fluctuation by departments")
     fig3 = px.bar(df, x='code_departement', y='valeur_fonciere')
     ts_chart = st.plotly_chart(fig3)
 
 
-def surface_terrain_vs_department():
+def surface_terrain_vs_department(df):
     st.header("Land value fluctuation by departments")
     fig3 = px.bar(df, x='code_departement', y='surface_terrain')
     ts_chart = st.plotly_chart(fig3)
@@ -152,6 +152,7 @@ def main():
     st.write("Data Visualization - Return of transfers against payment ")
 
     st.sidebar.title("Search 🔎")
+    st.sidebar.write("Please select one of the below :")
 
     overall = st.sidebar.checkbox("Years overall")
     year_selection = st.sidebar.checkbox("Years selection")
@@ -164,28 +165,21 @@ def main():
         df = load_metadata(csv(app_mode))
         st.write("Year "+app_mode)
         if depart:
-            department = st.selectbox("Department",
-                ["Gironde (33)", "Nord (59)", "Loire-Atlantique (44)", "Seine-Et-Marne (77)", "Ile-Et-Vilaine (35)", "Alpes Maritimes (06)", "Seine (75)", "Yvelines (78)"])
-            if (department == "Gironde (33)"):
-                df_depart = df[df['code_departement']=="33"]
-            if (department == "Nord (59)"):
-                df_depart = df[df['code_departement']=="59"]
+            if app_mode == "2020":
+                department = st.sidebar.selectbox("Department",
+                    ["33", "59", "44", "77", "35", "06", "75", "78"])
+            if app_mode == "2016":
+                department = st.sidebar.selectbox("Department",
+                    ["33", "13", "31", "34", "6", "17", "29", "30","24","14"])
 
-            if (department == "Loire-Atlantique (44)"):
-                df_depart = df[df['code_departement']=="44"]
-
-            if (department == "Seine-Et-Marne (77)"):
-                df_depart = df[df['code_departement']=="77"]
-
-            if (department == "Ile-Et-Vilaine (35)"):
-                df_depart = df[df['code_departement']=="35"]
-                st.write('There is no adjudication or expropriation in this department.')
-
-            if (department == "Seine (75)"):
-                df_depart = df[df['code_departement']=="75"]
-
-            if (department == "Yvelines (78)"):
-                df_depart = df[df['code_departement']=="78"]
+            if app_mode == "2017":
+                department = st.sidebar.selectbox("Department",
+                    ["13", "31", "6", "29", "17", "33", "22", "14","30","24"])
+            if (app_mode == "2018") or (app_mode == "2019"):
+                department = st.sidebar.selectbox("Department",
+                    ["33", "59", "69", "44", "13"])
+            df_depart = df[df['code_departement']==department]
+            
 
             nature_mutation_repart(df_depart)
             type_local_repart(df_depart)
@@ -194,7 +188,7 @@ def main():
             st.line_chart(df_depart['surface_reelle_bati'])
             st.line_chart(df_depart['surface_terrain'])
 
-            valeur_fonciere_vs_date()
+            valeur_fonciere_vs_date(df_depart)
 
 
             st.header("Histogram")
@@ -250,9 +244,9 @@ def main():
             st.line_chart(df['surface_terrain'])
 
 
-            valeur_fonciere_vs_date()
-            valeur_fonciere_vs_department()
-            surface_terrain_vs_department()
+            valeur_fonciere_vs_date(df)
+            valeur_fonciere_vs_department(df)
+            surface_terrain_vs_department(df)
 
             st.header("Histogram")
             hist_values = np.histogram(df.index.hour, bins=24, range=(0,24))[0]
