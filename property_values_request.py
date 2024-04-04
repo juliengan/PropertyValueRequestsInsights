@@ -26,7 +26,6 @@ def log(func):
             before = time.time()
             func()
             f.write("Called function with " + str(time.time() - before) + " seconds " + "\n")
-            #f.write("Called function with " + " ".join([str(arg) for arg in args]) + " at " + str(datetime.datetime.now()) + "\n")
         return func(*args,**kwargs)
     return wrapper
 
@@ -38,7 +37,6 @@ def logDF(appmode):
                 before = time.time()
                 fun()
             f.write("Called function with " + str(time.time() - before) + " seconds " + "\n")
-            #f.write("Called function with " + " ".join([str(arg) for arg in args]) + " at " + str(datetime.datetime.now()) + "\n")
             return fun(*args,**kwargs)
         return wrapper
     return decorator
@@ -50,7 +48,6 @@ def logMAP(df):
                 before = time.time()
                 fun()
             f.write("Called function with " + str(time.time() - before) + " seconds " + "\n")
-            #f.write("Called function with " + " ".join([str(arg) for arg in args]) + " at " + str(datetime.datetime.now()) + "\n")
             return fun(*args,**kwargs)
         return wrapper
     return decorator
@@ -182,8 +179,6 @@ def altair(df):
     temps = df.index
     temps = temps[temps < '2020-12-15']
     c = alt.Chart(temps).mark_line().encode(x='date:T',y='temp:Q')
-    #c = alt.Chart(df).mark_circle().encode(
-    #x='code_departement', y='valeur_fonciere', size='nature_mutation', color='c', tooltip=['code_departement', 'valeur_fonciere', 'nature_mutation'])
     st.altair_chart(c, use_container_width=True)
 
 def seaborn(df):
@@ -209,7 +204,7 @@ def main():
     year_selection = st.sidebar.checkbox("Years selection")
 
 
-    #Data visualization : visual representation and analysis through different axes and aggregations
+    #Data visualization: visual representation and analysis through different axes and aggregations
     if year_selection:
         app_mode = st.sidebar.selectbox("Year",
                 ["2016", "2017", "2018", "2019", "2020"])
