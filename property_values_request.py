@@ -2,20 +2,14 @@ from typing import overload
 from matplotlib.colors import Normalize
 import pandas as pd
 import streamlit as st
-#import pyarrow as pa
 import numpy as np
 import matplotlib.pyplot as plt
-#import datetime as dt 
-#from streamlit.elements.color_picker import ColorPickerMixin
 import plotly_express as px
 import seaborn as sns
 import time 
-#import os
 import streamlit.components.v1 as components
 import altair as alt
 
-
-#from bokeh.plotting import figure
 @st.cache(allow_output_mutation=True)
 def get_dom(dt):
     return dt.day 
@@ -61,7 +55,6 @@ def logMAP(df):
         return wrapper
     return decorator
  
-#@logDF
 @st.cache(suppress_st_warning=True,allow_output_mutation=True) 
 def load_metadata(url):
     df = pd.read_csv(url, header=0, parse_dates=['date_mutation'],skipinitialspace = True,
