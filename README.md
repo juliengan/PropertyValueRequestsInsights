@@ -1,6 +1,4 @@
-# PJ_dataViz - Julie NGAN 
-#### @juliengan
-
+# Property Values Resquests Insights
 
 ## Goal of the project
 The goal of the project is to make data visualisation to help making insights decisions out of it.
